@@ -1,9 +1,11 @@
-import React from 'react';
-import { View, ScrollView, StyleSheet, Image } from 'react-native';
+import React,{useState} from 'react';
+import { View, ScrollView, StyleSheet, Image, Modal, TouchableOpacity } from 'react-native';
 import { Text, Card, Button, Icon } from '@rneui/themed';
 import * as Animatable from 'react-native-animatable';
 
 export default function HomeScreen() {
+
+    const [modalVisible, setModalVisible] = useState(false);
 
   const users = [
     {
@@ -40,33 +42,132 @@ export default function HomeScreen() {
       date:'12/06/2025',
       isPresent:false,
       Salle:'Sales M (Mathilde Dupain)'
-    }]
+    }];
+
+    const notifications = [
+  {
+    id: 1,
+    date: '02/07/2025 09:15',
+    message: "Votre présence a bien été enregistrée.",
+  },
+  {
+    id: 2,
+    date: '02/06/2025 13:45',
+    message: "Le cours Hackaton va commencer dans 15mn. On compte sur toi soldat!!",
+  },
+];
   
   return (
 
       <ScrollView>
       <View style={styles.container}>
             <View style={styles.userInfoSection}>
+
+              <View style={styles.roundedIcon}>
               <Icon
                 name="person"
                 type="material"
                 color="#1976d2"
-                size={48}
-                containerStyle={{ marginRight: 16 }}
+                size={32}
+                containerStyle={{ marginRight: 0 }}
               />
+              </View>
+
               <Text style={styles.welcomeText}>Bienvenue, <Text style={styles.userName}>Jean Dupont</Text></Text>
+            <TouchableOpacity
+            style={{ position: 'relative', marginLeft: 16 }}
+            onPress={() => setModalVisible(true)}
+            >
+              <View style={{ position: 'relative', marginLeft: 16 }}>
+              <Icon
+                name="notifications"
+                type="material"
+                color="#FFD600" // yellow
+                size={32}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  top: -4,
+                  right: -4,
+                  backgroundColor: '#FF5252',
+                  borderRadius: 8,
+                  minWidth: 16,
+                  height: 16,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 2,
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 11, fontWeight: 'bold' }}>2</Text>
+              </View>
             </View>
-<Text style={styles.todayText}>Aujourd'hui</Text>
-<View style={styles.arriveSectionSmall}>
-  <Icon
-    name="fingerprint"
-    type="material"
-    color="#1976d2"
-    size={20} // smaller icon
-    containerStyle={{ marginRight: 6 }}
-  />
-  <Text style={styles.arriveTextSmall}>Arrivé au campus à 09:15</Text>
-</View>
+              </TouchableOpacity>
+            </View>
+
+
+           <View style={styles.headerShadow} />
+
+          <Modal
+            visible={modalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={{
+              flex: 1,
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              <View style={{
+                backgroundColor: '#fff',
+                borderRadius: 16,
+                padding: 24,
+                minWidth: 300,
+                maxWidth: 340,
+                alignItems: 'center'
+              }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 18 }}>Notifications</Text>
+                {notifications.map((notif) => (
+                  <View
+                    key={notif.id}
+                    style={{
+                      backgroundColor: '#f0f6ff',
+                      borderRadius: 10,
+                      padding: 14,
+                      marginBottom: 12,
+                      width: 260,
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.08,
+                      shadowRadius: 2,
+                      elevation: 2,
+                    }}
+                  >
+                    <Text style={{ color: '#1976d2', fontWeight: 'bold', fontSize: 13, marginBottom: 4 }}>
+                      {notif.date}
+                    </Text>
+                    <Text style={{ color: '#222', fontSize: 15 }}>{notif.message}</Text>
+                  </View>
+                ))}
+                <Button title="Fermer" onPress={() => setModalVisible(false)} />
+              </View>
+            </View>
+          </Modal>
+
+
+          <Text style={styles.todayText}>Aujourd'hui</Text>
+          <View style={styles.arriveSectionSmall}>
+            <Icon
+              name="fingerprint"
+              type="material"
+              color="#1976d2"
+              size={20} // smaller icon
+              containerStyle={{ marginRight: 6 }}
+            />
+            <Text style={styles.arriveTextSmall}>Arrivé au campus à 09:15</Text>
+          </View>
                 {users.map((u, i) => (
       <Card key={i} containerStyle={{ borderRadius: 12, marginBottom: 16, elevation: 3 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -164,6 +265,31 @@ const styles = StyleSheet.create({
 container: {
   flex: 1,
 },
+headerShadow: {
+  height: 4,
+  backgroundColor: '#e0e7ef',
+  borderRadius: 2,
+  marginBottom: 12,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 3,
+  elevation: 3, // for Android
+},
+roundedIcon: {
+  width: 38,
+  height: 38,
+  borderRadius: 24,
+  backgroundColor: '#e0e7ef',
+  justifyContent: 'center',
+  alignItems: 'center',
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 3,
+  elevation: 3, // Android shadow
+  marginRight: 16,
+},
 fonts: {
   marginBottom: 8,
 },
@@ -194,9 +320,11 @@ detailText: {
 userInfoSection: {
   flexDirection: 'row',
   alignItems: 'center',
+  justifyContent: 'space-between',
   marginBottom: 24,
   marginTop: 16,
   paddingHorizontal: 10,
+
 },
 welcomeText: {
   fontSize: 22,
