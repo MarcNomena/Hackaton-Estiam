@@ -6,6 +6,8 @@ import {
     AgendaList,
 } from "react-native-calendars";
 
+import Header from "@/components/header";
+
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
 
 const todayDate = new Date();
@@ -93,6 +95,8 @@ export default function CalendarScreen() {
 
     return (
         <View style={{ flex: 1 }}>
+
+            <Header/>
             <CalendarProvider date={selectedDate} onDateChanged={setSelectedDate}>
                 <ExpandableCalendar
                     firstDay={1}

@@ -6,8 +6,8 @@ export default function TabLayout() {
       <Tabs.Screen name="index" options={{ title: 'Accueil',headerShown:false, tabBarIcon: ({ color, size }) => (
             <Icon name="home" type="material" color={color} size={size} />
           ), }} />
-      <Tabs.Screen name="result" options={{ title: 'Notes',headerShown:false , tabBarIcon: ({ color, size }) => (
-            <Icon name="assessment" type="material" color={color} size={size} />
+        <Tabs.Screen name="result" options={{ title: 'Step Tracker', headerShown:false, tabBarIcon: ({ color, size }) => (
+            <Icon name="directions-walk" type="material" color={color} size={size} />
           ), }} />
       <Tabs.Screen name="calendar" options={{ title: 'Calendar',headerShown: false, tabBarIcon: ({ color, size }) => (
             <Icon name="calendar-today" type="material" color={color} size={size} />
