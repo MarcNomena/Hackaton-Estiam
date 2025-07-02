@@ -9,7 +9,7 @@ export default function HomeScreen() {
     {
       name: 'hackaton ',
       avatar: 'https://img.icons8.com/external-flaticons-flat-flat-icons/64/external-hackathon-ux-and-ui-flaticons-flat-flat-icons.png',
-      isNow:true,
+      isNow:false,
       startDate: '09:00',
       endDate: '13:00',
       date:'03/06/2025',
@@ -21,7 +21,7 @@ export default function HomeScreen() {
       name: 'Hackaton',
       avatar:
         'https://img.icons8.com/external-flaticons-flat-flat-icons/64/external-hackathon-ux-and-ui-flaticons-flat-flat-icons.png',
-      isNow: false,
+      isNow: true,
       startDate: '14:00',
       endDate: '17:30',
       date:'02/06/2025',
@@ -33,11 +33,13 @@ export default function HomeScreen() {
 
     const tomorrow = [{
       name: 'IT-STARTUP ',
-      avatar: 'https://uifaces.co/our-content/donated/1H_7AxP0.jpg',
-      isNow:true,
+      avatar: 'https://img.icons8.com/plasticine/100/rocket.png',
+      isNow:false,
       startDate: '09:00',
       endDate: '13:00',
-      date:'03/06/2025'
+      date:'12/06/2025',
+      isPresent:false,
+      Salle:'Sales M (Mathilde Dupain)'
     }]
   
   return (
@@ -54,17 +56,17 @@ export default function HomeScreen() {
               />
               <Text style={styles.welcomeText}>Bienvenue, <Text style={styles.userName}>Jean Dupont</Text></Text>
             </View>
-
-            <View style={styles.arriveSection}>
-              <Icon
-                name="fingerprint"
-                type="material"
-                color="#1976d2"
-                size={48}
-                containerStyle={{ marginRight: 12 }}
-              />
-              <Text style={styles.arriveText}>Arrivé au campus à 09:15</Text>
-            </View>
+<Text style={styles.todayText}>Aujourd'hui</Text>
+<View style={styles.arriveSectionSmall}>
+  <Icon
+    name="fingerprint"
+    type="material"
+    color="#1976d2"
+    size={20} // smaller icon
+    containerStyle={{ marginRight: 6 }}
+  />
+  <Text style={styles.arriveTextSmall}>Arrivé au campus à 09:15</Text>
+</View>
                 {users.map((u, i) => (
       <Card key={i} containerStyle={{ borderRadius: 12, marginBottom: 16, elevation: 3 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
@@ -107,9 +109,51 @@ export default function HomeScreen() {
           </Text>
         </View>
       </Card>
-      ))}
-      
-
+                ))}
+        <Text style={styles.todayText}>À venir</Text>
+                {tomorrow.map((u, i) => (
+      <Card key={i} containerStyle={{ borderRadius: 12, marginBottom: 16, elevation: 3 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+          <Image
+            style={styles.avatarLarge}
+            resizeMode="cover"
+            source={{ uri: u.avatar }}
+          />
+          <View style={{ marginLeft: 12, flex: 1 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {u.isNow && (
+                <Animatable.View
+                  animation="pulse"
+                  iterationCount="infinite"
+                  duration={1200}
+                  style={{ marginRight: 6 }}
+                >
+                  <Icon
+                    name="radio-button-checked"
+                    type="material"
+                    color="green"
+                    size={22}
+                  />
+                </Animatable.View>
+              )}
+              <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{u.name}</Text>
+            </View>
+            <Text style={{ color: '#555', marginTop: 2 }}>{u.Salle}</Text>
+          </View>
+        </View>
+        <Card.Divider />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+          <Text style={styles.detailText}>Date: {u.date}</Text>
+          <Text style={styles.detailText}>Heure: {u.startDate} - {u.endDate}</Text>
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
+          <Text style={styles.detailText}>Heure passée en salle: - </Text>
+          <Text style={[styles.detailText, { color: 'grey' }]}>
+           À venir
+          </Text>
+        </View>
+      </Card>
+                ))}
       </View>
     </ScrollView>
   );
@@ -175,6 +219,29 @@ arriveSection: {
 arriveText: {
   fontSize: 22,
   fontWeight: "bold",
+  color: "#1976d2",
+},
+todayText: {
+  fontSize: 18,
+  fontWeight: 'bold',
+  color: 'black',
+  marginBottom: 10,
+  marginLeft: 8,
+},
+arriveSectionSmall: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginBottom: 10,
+  backgroundColor: "#f0f6ff",
+  paddingVertical: 4,
+  paddingHorizontal: 8,
+  borderRadius: 8,
+  alignSelf: "flex-start",
+  justifyContent: "center",
+},
+arriveTextSmall: {
+  fontSize: 13,
+  fontWeight: "600",
   color: "#1976d2",
 },
 });
