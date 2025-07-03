@@ -27,7 +27,7 @@ export default function HomeScreen() {
       isNow: true,
       startDate: '14:00',
       endDate: '17:30',
-      date:'02/06/2025',
+      date:'03/06/2025',
       isPresent:false,
       Salle:'Sales V (Jules VERNE)'
       },

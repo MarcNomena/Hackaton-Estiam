@@ -2,34 +2,12 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import Header from '@/components/header';
 import { Card, Text, Icon, Button } from '@rneui/themed';
 import { useState,useCallback,useEffect } from 'react';
+import { Int32 } from 'react-native/Libraries/Types/CodegenTypes';
 
 export default function HomeScreen() {
   const roomList = ['Salle V (Jules VERNE)', 'Salle C (Jean-Claude)','Salle D (Van Damme)'];
    const [history, setHistory] = useState([
-    {
-      type: 'entrée',
-      room: 'Salle V (Jules VERNE)',
-      datetime: '02/07/2025 09:15',
-      duration: 120, // in minutes
-    },
-    {
-      type: 'sortie',
-      room: 'Salle V (Jules VERNE)',
-      datetime: '02/07/2025 11:15',
-      duration: 0,
-    },
-    {
-      type: 'entrée',
-      room: 'Salle C (Jean-Claude)',
-      datetime: '01/07/2025 14:00',
-      duration: 90,
-    },
-    {
-      type: 'sortie',
-      room: 'Salle C (Jean-Claude)',
-      datetime: '01/07/2025 15:30',
-      duration: 0,
-    },
+    
   ]);
 
   const [room, setRoom] = useState('Introuvable...');
@@ -37,6 +15,7 @@ export default function HomeScreen() {
   const [scan, setScan] = useState(false);
   const [isInClass,setIsInClass]= useState(false);
   const [now, setNow] = useState(new Date());
+  const [proccessing,setProcessing] =useState(false);
   const formattedNow = now.toLocaleTimeString('fr-FR', {
     hour: '2-digit',
     minute: '2-digit',
@@ -48,13 +27,17 @@ export default function HomeScreen() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+     if(proccessing==false && bluetooth==true && scan==true)
+      simulation();
+}, [proccessing,bluetooth,scan]);
+
   const handleInClass = useCallback(() => {
     setIsInClass(!isInClass);
 }, [isInClass,room]); 
 
-  const handleSimulerEntree=()=>{
-    const randomNumber = Math.floor(Math.random() * 3);
-    setRoom(roomList[randomNumber]);
+  const handleSimulerEntree= async (index:Int32)=>{
+    setRoom(roomList[index]);
     handleInClass();
 
     const nowTime = new Date();
@@ -70,7 +53,7 @@ export default function HomeScreen() {
       setHistory(prev => [
         {
           type: 'entrée',
-          room: roomList[randomNumber],
+          room: roomList[index],
           datetime: formatted,
           duration: Math.floor(Math.random() * 120) + 1, // random duration for demo
         },
@@ -78,8 +61,12 @@ export default function HomeScreen() {
       ]);
   }
 
+  // Utility sleep function
+function sleep(ms:any) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-  const handleSimulerSortie= () => {
+  const handleSimulerSortie= async (index:Int32) => {
         const nowTime = new Date();
         const formatted = nowTime.toLocaleString('fr-FR', {
         day: '2-digit',
@@ -93,7 +80,7 @@ export default function HomeScreen() {
       setHistory(prev => [
         {
           type: 'sortie',
-          room: room,
+          room: roomList[index],
           datetime: formatted,
           duration: Math.floor(Math.random() * 120) + 1, // random duration for demo
         },
@@ -103,6 +90,25 @@ export default function HomeScreen() {
           setRoom('Introuvable...');
           handleInClass();
   }
+
+  const simulation = async()=>{
+    setProcessing(true);
+    for (let index = 0; index < roomList.length; index++) {
+     await handleSimulerEntree(index);
+      const item = roomList[index];
+      let rssiVariation = Math.random() * 5;
+
+      while (rssiVariation < 7) {
+        console.log('Salle detecté :' + item + ' avec une signale de rssi de :' + rssiVariation);
+        rssiVariation = Math.random() * 10;
+        await sleep(3000); 
+      }
+      console.log('Sortie de la salle :' + item + ' avec une signale de rssi de :' + rssiVariation);
+       await handleSimulerSortie(index);
+       await sleep(3000); 
+  }
+  setProcessing(false);
+}
 
   return (
     <ScrollView>
@@ -167,11 +173,11 @@ export default function HomeScreen() {
         </Card>
 
 
-{  scan==true &&      <Card containerStyle={styles.card}>
+  {  scan==true &&      <Card containerStyle={styles.card}>
           <Text style={styles.cardTitle}>Simulation de présence</Text>
           <View style={[styles.row, { justifyContent: 'space-around' }]}>
             
-           {isInClass==false ? <Button
+           {isInClass==false && <Button
               icon={
                 <Icon
                   name="door-open"
@@ -184,24 +190,24 @@ export default function HomeScreen() {
               title="Simuler Entrée"
               buttonStyle={{ backgroundColor: "#4caf50", borderRadius: 8, paddingHorizontal: 16 }}
               titleStyle={{ fontWeight: 'bold', fontSize: 15 }}
-               onPress={handleSimulerEntree}
+                onPress={()=>setProcessing(true)}
             />
-            : 
-                       <Button
-              icon={
-                <Icon
-                  name="logout"
-                  type="material-community"
-                  color="#fff"
-                  size={22}
-                  style={{ marginRight: 8 }}
-                />
-              }
-              title="Simuler Sortie"
-              buttonStyle={{ backgroundColor: "#f44336", borderRadius: 8, paddingHorizontal: 16 }}
-              titleStyle={{ fontWeight: 'bold', fontSize: 15 }}
-              onPress={handleSimulerSortie}
-            />
+            
+            //            <Button
+            //   icon={
+            //     <Icon
+            //       name="logout"
+            //       type="material-community"
+            //       color="#fff"
+            //       size={22}
+            //       style={{ marginRight: 8 }}
+            //     />
+            //   }
+            //   title="Simuler Sortie"
+            //   buttonStyle={{ backgroundColor: "#f44336", borderRadius: 8, paddingHorizontal: 16 }}
+            //   titleStyle={{ fontWeight: 'bold', fontSize: 15 }}
+            //   // onPress={handleSimulerSortie}
+            // />
             }
  
           </View>
